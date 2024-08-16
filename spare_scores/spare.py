@@ -33,6 +33,7 @@ def spare_train(
     verbose: int = 1,
     logs: str = "",
     **kwargs: Any,
+
 ) -> dict:
     """
     Trains a SPARE model, either classification or regression
