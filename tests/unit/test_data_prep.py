@@ -262,7 +262,6 @@ class CheckDataPrep(unittest.TestCase):
                 "Var2": [22, 23, 25, 24, 26],
             }
         )
-        print(result)
         self.assertTrue(result.equals(correct_df))
 
     def test_logging_basic_config(self):

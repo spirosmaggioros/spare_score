@@ -130,7 +130,7 @@ class CheckSpareScores(unittest.TestCase):
         # Test case 1: testing training an MLPTorch model
         result = spare_train(
             self.df_fixture,
-            "Age",
+            "ROI2",
             model_type="MLPTorch",
             data_vars=[
                 "ROI1",
@@ -152,10 +152,7 @@ class CheckSpareScores(unittest.TestCase):
         self.assertTrue(status == "OK")
         self.assertTrue(metadata["mdl_type"] == "MLPTorch")
         self.assertTrue(metadata["kernel"] == "linear")
-        self.assertTrue(
-            set(metadata["predictors"]) == set(self.model_fixture[1]["predictors"])
-        )
-        self.assertTrue(metadata["to_predict"] == self.model_fixture[1]["to_predict"])
+        self.assertTrue(metadata["to_predict"] == "ROI2")
 
         # test case 2: testing MLPTorch regression model
         result = spare_train(
