@@ -33,7 +33,7 @@ def spare_train(
     verbose: int = 1,
     logs: str = "",
     **kwargs: Any,
-) -> dict:
+) -> Any:
     """
     Trains a SPARE model, either classification or regression
 
@@ -221,7 +221,7 @@ def spare_test(
     spare_var: str = "SPARE_score",
     verbose: int = 1,
     logs: str = "",
-) -> pd.DataFrame:
+) -> Any:
     """
     Applies a trained SPARE model on a test dataset
 
