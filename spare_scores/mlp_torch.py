@@ -16,12 +16,12 @@ from sklearn.metrics import (
     confusion_matrix,
     f1_score,
     mean_absolute_error,
-    mean_squared_error,
     precision_score,
     r2_score,
     recall_score,
     roc_auc_score,
     roc_curve,
+    root_mean_squared_error,
 )
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -213,12 +213,12 @@ class MLPTorchModel:
 
         # Model settings
         self.classification = True if self.task == "Classification" else False
-        self.mdl: Any
-        self.scaler: Any
-        self.stats: Any
-        self.param: Any
-        self.train_dl: Any
-        self.val_dl: Any
+        self.mdl: Any = None
+        self.scaler: Any = None
+        self.stats: Any = None
+        self.param: Any = None
+        self.train_dl: Any = None
+        self.val_dl: Any = None
 
     def find_best_threshold(self, y_hat: list, y: list) -> Any:
         """
@@ -282,7 +282,7 @@ class MLPTorchModel:
         else:
             res_dict = {}
             mae = mean_absolute_error(y, y_hat)
-            mrse = mean_squared_error(y, y_hat, squared=False)
+            mrse = root_mean_squared_error(y, y_hat)
             r2 = r2_score(y, y_hat)
             res_dict["MAE"] = mae
             res_dict["RMSE"] = mrse

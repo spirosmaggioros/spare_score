@@ -151,7 +151,6 @@ class CheckSpareScores(unittest.TestCase):
         )
 
         status, result_data = result["status"], result["data"]
-
         metadata = result_data[1]
         self.assertTrue(status == "OK")
         self.assertTrue(metadata["mdl_type"] == "MLPTorch")
