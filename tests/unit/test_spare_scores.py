@@ -1,12 +1,15 @@
+import os
 import unittest
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
-import os
+
 from spare_scores.data_prep import check_test
-from spare_scores.util import load_df, load_model
 from spare_scores.mlp_torch import MLPDataset
 from spare_scores.spare import spare_test, spare_train
+from spare_scores.util import load_df, load_model
+
 
 class CheckMLPDataset(unittest.TestCase):
     def test_len(self):
@@ -23,6 +26,7 @@ class CheckMLPDataset(unittest.TestCase):
         self.Dataset = MLPDataset(self.X, self.Y)
         self.assertTrue(self.Dataset[0] == (1, 1))
         self.assertTrue(self.Dataset[len(self.Dataset) - 1] == (8, 8))
+
 
 class CheckSpareScores(unittest.TestCase):
 
@@ -105,7 +109,7 @@ class CheckSpareScores(unittest.TestCase):
             self.df_fixture,
             "ROI1",
             model_type="MLP",
-            data_vars = [
+            data_vars=[
                 "ROI2",
                 "ROI3",
                 "ROI4",
@@ -114,8 +118,8 @@ class CheckSpareScores(unittest.TestCase):
                 "ROI7",
                 "ROI8",
                 "ROI9",
-                "ROI10"
-            ]
+                "ROI10",
+            ],
         )
         status, result_data = result["status"], result["data"]
         metadata = result_data[1]
@@ -147,6 +151,7 @@ class CheckSpareScores(unittest.TestCase):
         )
 
         status, result_data = result["status"], result["data"]
+        print(f"########## {result_data} #######")
         metadata = result_data[1]
         self.assertTrue(metadata["mdl_type"] == "MLPTorch")
         self.assertTrue(metadata["kernel"] == "linear")
@@ -160,7 +165,7 @@ class CheckSpareScores(unittest.TestCase):
             self.df_fixture,
             "ROI1",
             model_type="MLPTorch",
-            data_vars = [
+            data_vars=[
                 "ROI2",
                 "ROI3",
                 "ROI4",
@@ -170,7 +175,7 @@ class CheckSpareScores(unittest.TestCase):
                 "ROI8",
                 "ROI9",
                 "ROI10",
-            ]
+            ],
         )
         status, result_data = result["status"], result["data"]
         metadata = result_data[1]
@@ -219,7 +224,7 @@ class CheckSpareScores(unittest.TestCase):
         result = spare_train(
             self.df_fixture,
             "ROI1",
-            data_vars = [
+            data_vars=[
                 "ROI2",
                 "ROI3",
                 "ROI4",
@@ -228,8 +233,8 @@ class CheckSpareScores(unittest.TestCase):
                 "ROI7",
                 "ROI8",
                 "ROI9",
-                "ROI10"
-            ]
+                "ROI10",
+            ],
         )
         status, result_data = result["status"], result["data"]
         metadata = result_data[1]
@@ -241,21 +246,13 @@ class CheckSpareScores(unittest.TestCase):
     def test_spare_train_SVM_None(self):
         self.df_fixture = load_df("../fixtures/sample_data.csv")
         # Test case 1: Training with no data vars
-        result = spare_train(
-            self.df_fixture,
-            "Age"
-        )
+        result = spare_train(self.df_fixture, "Age")
         self.assertTrue(result is not None)
-
 
     def test_spare_train_SVM2(self):
         self.df_fixture = load_df("../fixtures/sample_data.csv")
         # Test case 1: Test overwrites
-        result = spare_train(
-            self.df_fixture,
-            "Age",
-            output="test_util.py"
-        )
+        result = spare_train(self.df_fixture, "Age", output="test_util.py")
         self.assertTrue(result["status_code"] == 2)
 
         # Test case 2: Train with non existing output file
@@ -274,7 +271,7 @@ class CheckSpareScores(unittest.TestCase):
                 "ROI9",
                 "ROI10",
             ],
-            output="results"
+            output="results",
         )
         self.assertTrue(os.path.isfile("results.pkl.gz") == True)
         os.remove("results.pkl.gz")
@@ -306,7 +303,7 @@ class CheckSpareScores(unittest.TestCase):
         self.model_fixture = load_model("../fixtures/sample_model.pkl.gz")
 
         # Test case 1: Test with existing output path
-        if(not os.path.isfile("output.csv")):
+        if not os.path.isfile("output.csv"):
             f = open("output.csv", "x")
         result = spare_test(self.df_fixture, self.model_fixture, output="output")
         self.assertTrue(result["status_code"] == 0)
@@ -316,16 +313,13 @@ class CheckSpareScores(unittest.TestCase):
         data = {
             "Var1": [x for x in range(100)],
             "Var2": [x for x in range(100)],
-            "label": [x**2 for x in range(100)]
+            "label": [x**2 for x in range(100)],
         }
         self.df_fixture = pd.DataFrame(data=data)
-        meta_data = {
-            "predictors": "Not_existing"
-        }
+        meta_data = {"predictors": "Not_existing"}
         err, cols_not_found = check_test(self.df_fixture, meta_data)
         self.assertTrue(len(err) != 0)
         self.assertTrue(cols_not_found is not None)
-
 
     def test_spare_train_regression_error(self):
         self.df_fixture = load_df("../fixtures/sample_data.csv")
@@ -344,65 +338,50 @@ class CheckSpareScores(unittest.TestCase):
                 "ROI8",
                 "ROI9",
                 "ROI10",
-            ]
+            ],
         )
 
         self.assertTrue(result["status_code"] == 2)
-        self.assertTrue(result["status"] == "Dataset check failed before training was initiated.")
+        self.assertTrue(
+            result["status"] == "Dataset check failed before training was initiated."
+        )
 
         # Test case 2: testing with a too-small dataset
         data = {
-            "Var1": [1,2,3,4,5],
-            "Var2": [2,4,6,8,10],
-            "label": [1.5,2.4,3.2,4.5,5.5]
+            "Var1": [1, 2, 3, 4, 5],
+            "Var2": [2, 4, 6, 8, 10],
+            "label": [1.5, 2.4, 3.2, 4.5, 5.5],
         }
         self.df_fixture = pd.DataFrame(data=data)
-        result = spare_train(
-            self.df_fixture,
-            "label",
-            data_vars=[
-                "Var1",
-                "Var2"
-            ]
-        )
+        result = spare_train(self.df_fixture, "label", data_vars=["Var1", "Var2"])
 
         self.assertTrue(result["status_code"] == 2)
-        self.assertTrue(result["status"] == "Dataset check failed before training was initiated.")
+        self.assertTrue(
+            result["status"] == "Dataset check failed before training was initiated."
+        )
 
         # Test case 3: testing with a label that has to variance
         data = {
-            "Var1": [1,2,3,4,5],
-            "Var2": [2,4,6,8,10],
-            "label": [1,1,1,1,1]
+            "Var1": [1, 2, 3, 4, 5],
+            "Var2": [2, 4, 6, 8, 10],
+            "label": [1, 1, 1, 1, 1],
         }
         self.df_fixture = pd.DataFrame(data=data)
-        result = spare_train(
-            self.df_fixture,
-            "label",
-            data_vars=[
-                "Var1",
-                "Var2"
-            ]
-        )
+        result = spare_train(self.df_fixture, "label", data_vars=["Var1", "Var2"])
         self.assertTrue(result["status_code"] == 2)
-        self.assertTrue(result["status"] == "Dataset check failed before training was initiated.")
+        self.assertTrue(
+            result["status"] == "Dataset check failed before training was initiated."
+        )
 
         # Test case 4: testing with a dataset that may be too small
         data = {
             "Var1": [x for x in range(80)],
             "Var2": [x for x in range(80)],
             "Var3": [x for x in range(80)],
-            "label": [x*2 for x in range(80)]
+            "label": [x * 2 for x in range(80)],
         }
 
         self.df_fixture = pd.DataFrame(data=data)
-        result = spare_train(
-            self.df_fixture,
-            "label",
-            data_vars=[
-                "Var1",
-                "Var2"
-            ]
-        )
+        result = spare_train(self.df_fixture, "label", data_vars=["Var1", "Var2"])
 
         self.assertTrue(result is not None)
