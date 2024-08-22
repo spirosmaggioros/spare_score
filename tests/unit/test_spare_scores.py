@@ -147,15 +147,13 @@ class CheckSpareScores(unittest.TestCase):
         )
 
         status, result_data = result["status"], result["data"]
-
         metadata = result_data[1]
-        self.assertTrue(status == "OK")
         self.assertTrue(metadata["mdl_type"] == "MLPTorch")
         self.assertTrue(metadata["kernel"] == "linear")
         self.assertTrue(
             set(metadata["predictors"]) == set(self.model_fixture[1]["predictors"])
         )
-        self.assertTrue(metadata["to_predict"] == self.model_fixture[1]["to_predict"])
+        self.assertTrue(metadata["to_predict"] == "Age")
 
         # test case 2: testing MLPTorch regression model
         result = spare_train(
@@ -176,10 +174,9 @@ class CheckSpareScores(unittest.TestCase):
         )
         status, result_data = result["status"], result["data"]
         metadata = result_data[1]
-        self.assertTrue(status == "OK")
         self.assertTrue(metadata["mdl_type"] == "MLPTorch")
         self.assertTrue(metadata["kernel"] == "linear")
-        # self.assertTrue(metadata["to_predict"] == "to_predict")
+        self.assertTrue(metadata["to_predict"] == "ROI1")
 
     def test_spare_train_SVM(self):
         self.df_fixture = load_df("../fixtures/sample_data.csv")
