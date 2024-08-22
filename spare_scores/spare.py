@@ -76,7 +76,7 @@ def spare_train(
     :rtype: dict
 
     """
-    res = {"status_code": int, "status": Any, "data": Any}
+    res = {"status_code": int, "status": Union[bool, str], "data": dict}
 
     logger = logging_basic_config(verbose=verbose, filename=logs)
 

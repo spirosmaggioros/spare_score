@@ -43,7 +43,7 @@ def add_file_extension(filename: str, extension: str) -> str:
     return filename
 
 
-def check_file_exists(filename: str, logger: Any) -> Any:
+def check_file_exists(filename: str, logger: Any) -> Union[bool, str]:
     """
     Checks if file exists
 
